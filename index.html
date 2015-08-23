@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+     <style>
+	.node {
+  	cursor: pointer;
+	}
+	
+    </style>
+  </head>
+ 
+  <body>
+ 
+<!-- load the d3.js library -->	
+<script src="http://d3js.org/d3.v3.min.js"></script>
+	
+<script>
+var treeData = [
+  {
+    "name": "Top Level",
+    "parent": "null",
+    "icon":"images/TotalAfrica.png" ,
+    "_children": [
+      {
+        "name": "Level 2: D",
+        "parent": "Top Level",
+        "icon": "images/TotalMA.png",
+        "_children": [
+          {
+            "name": "Son of D",
+            "parent": "Level 2: D",
+            "icon": "images/Cameroon.png"
+          },
+          {
+            "name": "Son of D",
+            "parent": "Level 2: D",
+            "icon": "images/OtherMA.png"
+          }
+          ]
+      },
+      {
+        "name": "Level 2: B",
+        "parent": "Top Level",
+        "icon": "images/TotalEA.png",
+        "_children": [
+          {
+            "name": "Son of B",
+            "parent": "Level 2: B",
+            "icon": "images/Kenya.png"
+          },
+          {
+            "name": "Son of B",
+            "parent": "Level 2: B",
+            "icon": "images/Ethiopia.png"
+          },
+          {
+            "name": "Son of B",
+            "parent": "Level 2: B",
+            "icon": "images/Eritrea.png"
+          },
+          {
+            "name": "Son of B",
+            "parent": "Level 2: B",
+            "icon": "images/OtherEA.png"
+          }
+          ]
+      },
+      
+       {
+        "name": "Level 2: A",
+        "parent": "Top Level",
+        "icon": "images/TotalWA.png",
+        "_children": [
+          {
+            "name": "Son of A",
+            "parent": "Level 2: A",
+            "icon": "images/Ghana.png"
+          },
+          {
+            "name": "Daughter of A",
+            "parent": "Level 2: A",
+            "icon": "images/Liberia.png"
+          },
+          {
+            "name": "Daughter of A",
+            "parent": "Level 2: A",
+            "icon": "images/SierraLeone.png"
+          },
+          {
+            "name": "Daughter of A",
+            "parent": "Level 2: A",
+            "icon": "images/Nigeria.png"
+          },
+          {
+            "name": "Daughter of A",
+            "parent": "Level 2: A",
+            "icon": "images/OtherWA.png"
+          }
+        ]
+      },
+      
+      
+      {
+        
+        "name": "Level 2: C",
+        "parent": "Top Level",
+        "icon": "images/TotalNA.png",
+        "_children": [
+          {
+            "name": "Son of C",
+            "parent": "Level 2: C",
+            "icon": "images/Sudan.png"
+          },
+          {
+            "name": "Son of C",
+            "parent": "Level 2: C",
+            "icon": "images/Egypt.png"
+          },
+          {
+            "name": "Son of C",
+            "parent": "Level 2: C",
+            "icon": "images/Morocco.png"
+          },
+          {
+            "name": "Son of C",
+            "parent": "Level 2: C",
+            "icon": "images/OtherNA.png"
+          }
+          ]
+      },
+      {
+        "name": "Level 2: E",
+        "parent": "Top Level",
+        "icon": "images/TotalSA.png",
+        "_children": [
+          {
+            "name": "Son of E",
+            "parent": "Level 2: E",
+            "icon": "images/SouthAfrica.png"
+          },
+          {
+            "name": "Son of E",
+            "parent": "Level 2: E",
+            "icon": "images/OtherSA.png"
+          }
+          ]
+      }
+    ]
+  }
+];
+// ************** Generate the tree diagram	 *****************
+var margin = {top: 20, right: 120, bottom: 20, left: 120},
+	width = 1400 - margin.right - margin.left,
+	height = 1200 - margin.top - margin.bottom;
+	
+var i = 0,
+	duration = 750,
+	root;
+var tree = d3.layout.tree()
+	.size([width, height]);
+var diagonal = d3.svg.diagonal()
+	.projection(function(d) { return [d.x, d.y]; });
+	
+var zoom = d3.behavior.zoom()
+    .scaleExtent([0.8, 4])
+    .on("zoom", zoomed);
+var svgWhole = d3.select("body").append("svg")
+	.attr("width", width + margin.right + margin.left)
+	.attr("height", height + margin.top + margin.bottom)
+        .call(zoom);
+ 
+var rect = svgWhole.append("rect")
+        .attr("width",width)
+        .attr("height",height)
+        .style("fill", "none")
+        .style("pointer-events","all");
+var svg =svgWhole.append("g");
+svgWhole.append("rect")
+        .attr("x",0)
+        .attr("y",0)
+        .attr("width", 260)
+        .attr("height", height)
+        .style("fill", "rgb(200,200,200)");
+    
+svgWhole.append("text")
+        .attr("x",10)
+        .attr("y",20)
+        .attr("font-family", "calibri")
+        .attr("font-size","24")
+        .text("Number of African-Born");
+svgWhole.append("text")
+        .attr("x",10)
+        .attr("y",40)
+        .attr("font-family", "calibri")
+        .attr("font-size","24")
+        .text("Philadelphia Residents");
+svgWhole.append("text")
+        .attr("x",10)
+        .attr("y",70)
+        .attr("font-family", "calibri")
+        .attr("font-size","14")
+        .text("By census tract, as reported in the 2013");
+    
+svgWhole.append("text")
+        .attr("x",10)
+        .attr("y",85)
+        .attr("font-family", "calibri")
+        .attr("font-size","14")
+        .text("American Community Survey");
+svgWhole.append("text")
+        .attr("x",10)
+        .attr("y",115)
+        .attr("font-family", "calibri")
+        .attr("font-size","14")
+        .text("Click each map for more detailed");
+svgWhole.append("text")
+        .attr("x",10)
+        .attr("y",130)
+        .attr("font-family", "calibri")
+        .attr("font-size","14")
+        .text("breakdowns by region and country of birth");
+    
+    
+svgWhole.append("text")
+        .attr("x",10)
+        .attr("y",160)
+        .attr("font-family", "calibri")
+        .attr("font-size","14")
+        .text("Zoom and drag for a closer look");
+svgWhole.append("image")
+        .attr("xlink:href", "http://imgh.us/ContinentOfAfricaLabeled2gimp.png")
+        .attr("x", -10)
+        .attr("y", 190)
+        .attr("width", 250)
+        .attr("height", 285);
+svgWhole.append("image")
+        .attr("xlink:href", "http://imgh.us/legend2gimp2.png")
+        .attr("x", 50)
+        .attr("y", 440)
+        .attr("width", 125)
+        .attr("height", 150);
+root = treeData[0];
+//root.x0 = (height/2)+100;
+//root.y0 = 0;  
+update(root);
+function update(source) {
+  // Compute the new tree layout.
+  var nodes = tree.nodes(root).reverse(),
+	  links = tree.links(nodes);
+  // Normalize for fixed-depth.
+  nodes.forEach(function(d) { d.y = d.depth * 230; });
+  // Declare the nodes…
+  var node = svg.selectAll("g.node")
+	  .data(nodes, function(d) { return d.id || (d.id = ++i); });
+  // Enter the nodes.
+  var nodeEnter = node.enter().append("g")
+	  .attr("class", "node")
+	  .attr("transform", function(d) { 
+		 return "translate(" + source.x0 + "," + source.y0 + ")"; })
+          .on("click",click);
+ 
+		
+  nodeEnter.append("image")
+      .attr("xlink:href", function(d) { return d.icon; })
+      .attr("x", "0px")
+      .attr("y", "0px")
+      .attr("width", "210px")
+      .attr("height", "235px");
+// Transition nodes to their new position.
+  var nodeUpdate = node.transition()
+	  .duration(duration)
+	  .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+	 
+  // Transition exiting nodes to the parent's new position.
+  var nodeExit = node.exit().transition()
+	  .duration(duration)
+	  .attr("transform", function(d) { return "translate(" + source.x + "," +       source.y + ")"; })
+	  .remove();
+  // Stash the old positions for transition.
+  nodes.forEach(function(d) {
+	d.x0 = d.x;
+	d.y0 = d.y;
+  });
+}
+// Toggle children on click
+function click(d){
+	console.log("click started");
+ if (event.defaultPrevented) return;
+ console.log("click continued");
+ if (d.children) {
+    d._children = d.children;
+    d.children = null;
+  } else {
+    d.children = d._children;
+    d._children = null;
+  }
+  
+  update(d);
+}
+// Define the zoom function for the zoomable tree
+function zoomed() {
+svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")")
+	}
+</script>
+	
+ </body>
+</html>
