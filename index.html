@@ -13,7 +13,7 @@
   <body>
  
 <!-- load the d3.js library -->	
-<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="https://d3js.org/d3.v3.min.js"></script>
 	
 <script>
 var treeData = [
@@ -250,7 +250,7 @@ function update(source) {
 	  links = tree.links(nodes);
   // Normalize for fixed-depth.
   nodes.forEach(function(d) { d.y = d.depth * 230; });
-  // Declare the nodes…
+  // Declare the nodesâ€¦
   var node = svg.selectAll("g.node")
 	  .data(nodes, function(d) { return d.id || (d.id = ++i); });
   // Enter the nodes.
